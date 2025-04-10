@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ธิ กำลังกาย</title>
+    <script> 
+    
+        const NUMBER_OF_BGM = 44 ;
+
+        const GUIDE_MESSAGES = `
+You've got this! Keep pushing!
+Stronger every second!
+You're crushing it!
+Keep that energy up!
+Amazing effort!
+You're unstoppable!
+Power through!
+Great job, keep going!
+You're a champion!
+Stay strong!
+Making progress every moment!
+Fantastic work!
+Keep the momentum!
+You're doing awesome!
+Push it to the limit!
+Incredible stamina!
+You're a fitness rockstar!
+Keep that fire burning!
+Strong and steady!
+You're killing it!"
+` ;
+
+        const DANCE_IDEAS = `
+เท้าสะเอว สควอทนั่งลม หันหัวซ้ายขวา  กลับยืนหันหัวซ้ายขวา
+เท้าสะเอว แขม่วตามจังหวะ ให้พุงเคลื่อนไหว
+เท้าสะเอว แขม่วค้างนับจังหวะ
+เท้าสะเอว หันตัวซ้ายขวา
+ลำดับเตะขา หน้า 4 ข้าง 4 หลัง 4 แล้วสลับข้าง
+ยืนแล้วเขย่งค้าง + วาดแขนขึ้นบน +วาดแขนออกข้าง
+แกว่งสะโพก สปินๆๆๆๆ
+โพสท์วิ่ง ซาโบเทนเดอร์
+ยกเข่าขึ้นสูง ไม่ต้องเร็วมาก ทีละข้าง
+แขม่วค้าง โยกหัวซ้ายขวา หน้าตรง
+เตะขาข้าง 4ครั้ง จบเตะหน้า
+เวฟตัว คอถึงก้น คอหน้าหลัง ก้นหน้าหลัง
+ตั้งข้อเท้าสวย แล้วแกว่งแขนระดับเอวซ้ายขวา
+จกโอ่ง
+คิงคอง แดนซ์
+ตั้งศอก โว้ก หมุนไปทางซ้ายขวา
+ตั้งศอก โว้กเป็นประตู แล้วบานหุบๆ
+ยืนปกติ หมุนหัวไหล่ สลับ หรือ พร้อมกันสองข้าง
+แอ่นหน้า สบัดงู ซ้ายขวา
+ยืนมั่นคง แล้วขมิบ
+โน้มตัวไปข้างหน้า มือยันกำแพงหรือเก้าอี้ เขย่ง ส้นลอย
+ก้าวขาไปข้างหนัา ย่อเข่า เป็นสี่เหลี่ยม เข่าหลังเกือบถึงพื้น
+กางขาออกข้างที่สุด ผีเสื้อ ย่อเข่า พร้อมปล่อยพลังไปข้างหน้า
+ยกขาข้างหนึ่ง ไปข้างหลัง เขย่งให้ส้นลอย สำเร็จ เปลี่ยนข้าง
+กางขา ยืนเอนไปข้างหลัง แล้วสบัดไหล่
+พนมมือ เอียงข้าง ช้าๆ ดั่งพระพุทธรูปเอียง
+กางขา ยกปลายเท้า ทีละข้าง ทำให้ตัวเอนไปด้านหลัง​อีก​ข้าง​
+ยืนกางขามั่นคง​ โน้มตัวลงหน้าช้าๆ แขม่ว
+` ;
+        
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #fafafa;
+        }
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px; /* Added minimum height for normal mode */            
+        }
+        button {
+            padding: 20px;
+            margin: 30px;
+            font-size: 32px;
+            background-color: #4CAF50;
+            color: #ddd;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #display {
+            color: #888;
+            font-size: 2.5rem;
+            margin: 20px 0;
+        }
+
+        #buttonBlock {
+            width: 100%;
+            animation: fadeInOut 1s ease-in;
+        }
+
+        #tipBlock {
+			color:#569;
+			font-size:1.5rem;
+            animation: fadeInOut 1s ease-in;
+        }
+                
+        @keyframes fadeInOut {
+			0% { opacity: 0; }
+			100% { opacity: 1; }
+		}
+        
+        /* Additional styles for fullscreen */
+        :fullscreen .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+            box-shadow: none;
+            border-radius: 0;
+        }        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="display">เลี่ยงทำไม เริ่มเลย</div>
+        <div id="buttonBlock" style="width:100%">
+			<button id="startBtnShort" onclick="startRoutine(3)">เบาๆ (3)</button>
+			<button id="startBtn" onclick="startRoutine(5)">พอดีๆ (5)</button>
+			<button id="startBtnLong" onclick="startRoutine(10)">ยาวๆ (10)</button>
+        </div>
+        <div id="tipBlock">เลือกระยะเวลา</div>
+    </div>
+
+    <script>
+    
+        const display = document.getElementById('display');
+        const divBtn = document.getElementById('buttonBlock');
+        const divTip = document.getElementById('tipBlock');
+        const container = document.querySelector('.container');
+        
+        const musicTracks = Array.from({ length: NUMBER_OF_BGM }, (_, i) => `audio/bgm${i+1}.mp3`);
+        let audioElement = null;
+        let setNumNow = 0 ;
+        const musicQueue = [] ;
+        const msgQueue = [] ;
+        const tipQueue = [] ;
+        
+        const encouragingMessages = GUIDE_MESSAGES.split('\n').filter(x => x.trim().length > 0) ;
+        const danceIdeas = DANCE_IDEAS.split('\n').filter(x => x.trim().length > 0);
+
+        function startRoutine(num=10) {
+            divBtn.style.display = 'none';
+            setNumNow = num ;
+            
+            // Request fullscreen
+            if (container.requestFullscreen) {
+                container.requestFullscreen();
+            } else if (container.webkitRequestFullscreen) { /* Safari */
+                container.webkitRequestFullscreen();
+            } else if (container.msRequestFullscreen) { /* IE11 */
+                container.msRequestFullscreen();
+            }            
+            
+            startSet();
+        }
+        
+        function startSet(count=3){
+            if(setNumNow > 0){
+				setNumNow-- ;
+				countdown(count);        
+			} else {
+			    endRoutine();
+			}
+        }
+
+        function countdown(seconds) {
+            tipBlock.textContent = "";
+            if (seconds > 0) {
+                display.textContent = seconds;
+                display.style.fontSize = '5rem';
+                display.style.color = '#aa8';
+
+                setTimeout(() => countdown(seconds - 1), 1000);
+            } else {
+                display.textContent = "Start!";
+                display.style.fontSize = '2.5rem';
+                display.style.color = '#888';
+                
+                setTimeout(startOrganizeMessages, 1000);
+            }
+        }
+
+        function startOrganizeMessages() {
+        
+            // Select and load random background music
+			if(musicQueue.length == 0) shuffleArrayToQueue(musicTracks, musicQueue);
+			const lastTrack = musicQueue.pop();
+			
+            if(audioElement){
+				audioElement.src = lastTrack;
+			}else{
+				audioElement = new Audio(lastTrack);
+				audioElement.volume = 1.0;
+				audioElement.loop = false;
+			}
+			
+            // Wait for metadata to load to get duration
+            // and proceed to schedule a message set + endRoutine()
+            audioElement.onloadedmetadata = () => {
+                const danceDuration = audioElement.duration * 1000; // Convert to milliseconds
+                
+                // Start music and animation
+                audioElement.play().catch(error => {
+                    console.log('Audio playback failed:', error);
+                });
+
+                if(msgQueue.length == 0) shuffleArrayToQueue(encouragingMessages, msgQueue);
+                display.textContent = msgQueue.pop();
+                const animationInterval = setInterval(() => {
+					if(msgQueue.length == 0) shuffleArrayToQueue(encouragingMessages, msgQueue);
+					display.textContent = msgQueue.pop();
+                }, 12000);  // change message every 12 seconds 
+
+                if(tipQueue.length == 0) shuffleArrayToQueue(danceIdeas, tipQueue);
+                divTip.textContent = tipQueue.pop();
+                const tipInterval = setInterval(() => {
+					if(tipQueue.length == 0) shuffleArrayToQueue(danceIdeas, tipQueue);
+					divTip.textContent = tipQueue.pop();
+                }, 32000);  // change tip message every 32 = 8 x 4 seconds 
+                
+                // End dance when music ends
+                setTimeout(() => {
+                    clearInterval(animationInterval);
+                    clearInterval(tipInterval);
+                    divTip.textContent = '' ;
+                    audioElement.pause();
+                    audioElement.currentTime = 0;
+                    startSet(5);
+                }, danceDuration);
+            };			                
+        }
+
+        function endRoutine() {
+	
+			// Exit fullscreen when restarting
+			if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+				if (document.exitFullscreen) {
+					document.exitFullscreen();
+				} else if (document.webkitExitFullscreen) { /* Safari */
+					document.webkitExitFullscreen();
+				} else if (document.msExitFullscreen) { /* IE11 */
+					document.msExitFullscreen();
+				}
+			}        
+        
+            display.textContent = "จ บ แ ล้ ว ! . เ ก่ ง ม า ก !";
+            const restartBtn = document.createElement('button');
+            restartBtn.textContent = "เริ่มอีกทีนะ";
+            restartBtn.onclick = () => {
+				divBtn.style.display = 'block';
+                restartBtn.remove();
+            };
+            document.querySelector('.container').appendChild(restartBtn);
+        }
+
+		function shuffleArrayToQueue(array, queue) {
+		  const shuffledArray = [...array];
+		  for (let i = shuffledArray.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+		  }
+		  shuffledArray.forEach(x => { queue.push(x);}); 
+		}
+				
+    </script>
+</body>
+</html>
