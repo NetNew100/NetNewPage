@@ -6,16 +6,16 @@
     <title>ธิ กำลังใจ</title>
     <script>
     
-        const NUMBER_OF_BGM = 3 ;
+        const NUMBER_OF_BGM = 4 ;
         
         const GUIDE_MESSAGES = `
-รู้ตัว
+รู้ ตัว
 อยู่ตรงนี้
 ลมหายใจ
 ปัจจุบันขณะ
 ปล่อยวาง
 กลับมา
-แค่รู้
+แค่ รู้
 ไม่ตัดสิน
 สังเกต
 สงบ
@@ -118,7 +118,7 @@
         <div id="buttonBlock" style="width:100%">
 			<button id="startBtnShort" onclick="startCareFreeChoice()">นั่งเฉยๆ ปล่อยใจ</button>
 			<button id="startBtnSilence" onclick="startSilenceChoice()">เงียบใจ (กลั้น)</button>
-			<button id="startBtnObserve" disabled onclick="startCareFreeChoice()">เคลียร์คอ</button>
+			<button id="startBtnStress" disabled onclick="startCareFreeChoice()">เคลียร์คอ</button>
 			<button id="startBtnObserve" disabled onclick="startCareFreeChoice()">ผู้สังเกต</button>
 			<button id="startBtnLong" disabled onclick="startCareFreeChoice()">พิจละเอียด</button>
         </div>
@@ -127,119 +127,125 @@
     
     <script>
     
-        const display = document.getElementById('display');
-        const divBtn = document.getElementById('buttonBlock');
-        const divTip = document.getElementById('tipBlock');
-        const container = document.querySelector('.container');
-                
-        const musicTracks = Array.from({ length: NUMBER_OF_BGM }, (_, i) => `audio/thi_bgm${i+1}.mp3`);
-        let audioElement = null;
-        let setNumNow = 0 ;
-        const musicQueue = [] ;
-        const msgQueue = [] ;
-        const tipQueue = [] ;
-        
-        const guideMessages = GUIDE_MESSAGES.split('\n').filter(x => x.trim().length > 0);
-        const tipMessages = TIP_MESSAGES.split('\n').filter(x => x.trim().length > 0);
-        
-        function startSilenceChoice(){
+		const display = document.getElementById('display');
+		const divBtn = document.getElementById('buttonBlock');
+		const divTip = document.getElementById('tipBlock');
+		const container = document.querySelector('.container');
+				
+		const musicTracks = Array.from({ length: NUMBER_OF_BGM }, (_, i) => `audio/thi_bgm${i+1}.mp3`);
+		let audioElement = null;
+		let setNumNow = 0 ;
+		const musicQueue = [] ;
+		const msgQueue = [] ;
+		const tipQueue = [] ;
+		
+		const guideMessages = GUIDE_MESSAGES.split('\n').filter(x => x.trim().length > 0);
+		const tipMessages = TIP_MESSAGES.split('\n').filter(x => x.trim().length > 0);
+		
+		function startSilenceChoice(){
 			divBtn.style.display = 'none';
-            display.textContent = 'ปิดทุกอย่าง เตรียมเงียบ หยุดพูด เท่าที่ได้';
-            divTip.innerHTML = '<button onclick="startSilenceSession(60)">สั้น (1 นาที)</button>'
-                             + '<button onclick="startSilenceSession(300)">ปกติ (5 นาที)</button>'
-                             + '<button onclick="startSilenceSession(1200)">ยาว (20 นาที)</button>';        
-        }
-        
-        function startSilenceSession(sec=300){
-            display.textContent = '';
-            divTip.textContent = 'ปิดทุกอย่าง แล้วเงียบ';
-            document.body.style.cursor = `url(${base64_blackTargetCursor}), auto`;            
+			display.textContent = 'ปิดทุกอย่าง เตรียมเงียบ หยุดพูด เท่าที่ได้';
+			divTip.innerHTML = '<button onclick="startSilenceSession(60)">สั้น (1 นาที)</button>'
+							 + '<button onclick="startSilenceSession(300)">ปกติ (5 นาที)</button>'
+							 + '<button onclick="startSilenceSession(1200)">ยาว (20 นาที)</button>';        
+		}
+		
+		function startSilenceSession(sec=300){
+			display.textContent = '';
+			divTip.textContent = 'ปิดทุกอย่าง แล้วเงียบ';
+			document.body.style.cursor = `url(${base64_blackTargetCursor}), auto`;            
 			
-            // Request fullscreen
-            if (container.requestFullscreen) {
-                container.requestFullscreen();
-            } else if (container.webkitRequestFullscreen) { // Safari 
-                container.webkitRequestFullscreen();
-            } else if (container.msRequestFullscreen) { // IE11 
-                container.msRequestFullscreen();
-            }           
+			// Request fullscreen
+			if (container.requestFullscreen) {
+				container.requestFullscreen();
+			} else if (container.webkitRequestFullscreen) { // Safari 
+				container.webkitRequestFullscreen();
+			} else if (container.msRequestFullscreen) { // IE11 
+				container.msRequestFullscreen();
+			}           
 
-            if(sec > 10){
+			if(sec > 10){
+				[5,4,3,2,1].forEach( x => {
+					setTimeout(() => { display.textContent = '' + x; }, 6000 - (x*1000))				
+				});
+			
 				setTimeout(() => {
+					display.textContent = '';
 					divTip.textContent = '';
-				}, 6*1000);
-            }
+				}, 6000);
+			}
+			
 
-            setTimeout(() => {
-                const endBgm = new Audio();
-                endBgm.src = base64_finishSound ;
+			setTimeout(() => {
+				const endBgm = new Audio();
+				endBgm.src = base64_finishSound ;
 				endBgm.volume = 0.85;
 				endBgm.loop = false;
 				endBgm.play().catch(error => {
-                    console.log('Audio playback failed:', error);
-                });
+					console.log('Audio playback failed:', error);
+				});
 
 				endRoutine();
-            }, sec*1000);						
-        }
+			}, 6000 + (sec*1000));						
+		}
 
-        function startCareFreeChoice(){
+		function startCareFreeChoice(){
 			divBtn.style.display = 'none';
-            display.textContent = 'ปล่อยใจ ไปเรื่อยๆ';
-            divTip.innerHTML = '<button onclick="startCareFreeRoutine(2)">สั้น (2)</button>'
-                             + '<button onclick="startCareFreeRoutine(5)">ปกติ (5)</button>'
-                             + '<button onclick="startCareFreeRoutine(10)">ยาว (10)</button>';        
-        }
-        
-        function startCareFreeRoutine(num=10) {
-            divBtn.style.display = 'none';
-            setNumNow = num ;
-            
-            // Request fullscreen
-            if (container.requestFullscreen) {
-                container.requestFullscreen();
-            } else if (container.webkitRequestFullscreen) { // Safari 
-                container.webkitRequestFullscreen();
-            } else if (container.msRequestFullscreen) { // IE11 
-                container.msRequestFullscreen();
-            }           
-            
-            startSet();
-        }
-        
-        function startSet(count=3){
-            if(setNumNow > 0){
+			display.textContent = 'ปล่อยใจ ไปเรื่อยๆ';
+			divTip.innerHTML = '<button onclick="startCareFreeRoutine(2)">สั้น (2)</button>'
+							 + '<button onclick="startCareFreeRoutine(5)">ปกติ (5)</button>'
+							 + '<button onclick="startCareFreeRoutine(10)">ยาว (10)</button>';        
+		}
+		
+		function startCareFreeRoutine(num=10) {
+			divBtn.style.display = 'none';
+			setNumNow = num ;
+			
+			// Request fullscreen
+			if (container.requestFullscreen) {
+				container.requestFullscreen();
+			} else if (container.webkitRequestFullscreen) { // Safari 
+				container.webkitRequestFullscreen();
+			} else if (container.msRequestFullscreen) { // IE11 
+				container.msRequestFullscreen();
+			}           
+			
+			startSet();
+		}
+		
+		function startSet(count=3){
+			if(setNumNow > 0){
 				setNumNow-- ;
 				countdown(count);        
 			} else {
-			    endRoutine();
+				endRoutine();
 			}
-        }
+		}
 
-        function countdown(seconds) {
-            tipBlock.textContent = "";
-            if (seconds > 0) {
-                display.textContent = seconds;
-                display.style.fontSize = '5rem';
-                display.style.color = '#aa8';
+		function countdown(seconds) {
+			tipBlock.textContent = "";
+			if (seconds > 0) {
+				display.textContent = seconds;
+				display.style.fontSize = '5rem';
+				display.style.color = '#aa8';
 
-                setTimeout(() => countdown(seconds - 1), 1000);
-            } else {
-                display.textContent = "Start!";
-                display.style.fontSize = '2.5rem';
-                display.style.color = '#888';
-                
-                setTimeout(startOrganizeMessages, 1000);
-            }
-        }
+				setTimeout(() => countdown(seconds - 1), 1000);
+			} else {
+				display.textContent = "Start!";
+				display.style.fontSize = '2.5rem';
+				display.style.color = '#888';
+				
+				setTimeout(startOrganizeMessages, 1000);
+			}
+		}
 
-        function startOrganizeMessages() {
-        
-            // Select and load random background music
+		function startOrganizeMessages() {
+		
+			// Select and load random background music
 			if(musicQueue.length == 0) shuffleArrayToQueue(musicTracks, musicQueue);
 			const lastTrack = musicQueue.pop();
 			
-            if(audioElement){
+			if(audioElement){
 				audioElement.src = lastTrack;
 			}else{
 				audioElement = new Audio(lastTrack);
@@ -247,46 +253,46 @@
 				audioElement.loop = false;
 			}
 			
-            // Wait for metadata to load to get duration
-            // and proceed to schedule a message set + endRoutine()
-            audioElement.onloadedmetadata = () => {
-                const danceDuration = audioElement.duration * 1000; // Convert to milliseconds
-                
-                // Start music and animation
-                audioElement.play().catch(error => {
-                    console.log('Audio playback failed:', error);
-                });
+			// Wait for metadata to load to get duration
+			// and proceed to schedule a message set + endRoutine()
+			audioElement.onloadedmetadata = () => {
+				const danceDuration = audioElement.duration * 1000; // Convert to milliseconds
+				
+				// Start music and animation
+				audioElement.play().catch(error => {
+					console.log('Audio playback failed:', error);
+				});
 
-                if(msgQueue.length == 0) shuffleArrayToQueue(guideMessages, msgQueue);
-                display.textContent = msgQueue.pop();
-                speakThai(display.textContent);
-                
-                if(tipQueue.length == 0) shuffleArrayToQueue(tipMessages, tipQueue);
-                divTip.textContent = tipQueue.pop();
-                speakThai(divTip.textContent);
-                
-                const animationInterval = setInterval(() => {
+				if(msgQueue.length == 0) shuffleArrayToQueue(guideMessages, msgQueue);
+				display.textContent = msgQueue.pop();
+				speakThai(display.textContent);
+				
+				if(tipQueue.length == 0) shuffleArrayToQueue(tipMessages, tipQueue);
+				divTip.textContent = tipQueue.pop();
+				speakThai(divTip.textContent);
+				
+				const animationInterval = setInterval(() => {
 					if(msgQueue.length == 0) shuffleArrayToQueue(guideMessages, msgQueue);
 					display.textContent = msgQueue.pop() ;
 					speakThai(display.textContent);
 					
 					if(tipQueue.length == 0) shuffleArrayToQueue(tipMessages, tipQueue);
 					divTip.textContent = tipQueue.pop();
-                    speakThai(divTip.textContent);					
-                }, 20000);  // change message every 20 seconds 
-                
-                // End dance when music ends
-                setTimeout(() => {
-                    clearInterval(animationInterval);
-                    divTip.textContent = '' ;
-                    audioElement.pause();
-                    audioElement.currentTime = 0;
-                    startSet(3);
-                }, danceDuration);
-            };			                
-        }
+					speakThai(divTip.textContent);					
+				}, 20000);  // change message every 20 seconds 
+				
+				// End dance when music ends
+				setTimeout(() => {
+					clearInterval(animationInterval);
+					divTip.textContent = '' ;
+					audioElement.pause();
+					audioElement.currentTime = 0;
+					startSet(3);
+				}, danceDuration);
+			};			                
+		}
 
-        function endRoutine() {
+		function endRoutine() {
 	
 			// Exit fullscreen when restarting
 			if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
@@ -299,17 +305,17 @@
 				}
 			}        
 			
-            document.body.style.cursor = 'crosshair';            
-        
-            display.textContent = "จ บ แ ล้ ว ! . เ ก่ ง ม า ก !";
-            const restartBtn = document.createElement('button');
-            restartBtn.textContent = "เริ่มอีกทีนะ";
-            restartBtn.onclick = () => {
+			document.body.style.cursor = 'crosshair';            
+		
+			display.textContent = "จ บ แ ล้ ว ! . เ ก่ ง ม า ก !";
+			const restartBtn = document.createElement('button');
+			restartBtn.textContent = "เริ่มอีกทีนะ";
+			restartBtn.onclick = () => {
 				divBtn.style.display = 'block';
-                restartBtn.remove();
-            };
-            document.querySelector('.container').appendChild(restartBtn);
-        }
+				restartBtn.remove();
+			};
+			document.querySelector('.container').appendChild(restartBtn);
+		}
 
 		function shuffleArrayToQueue(array, queue) {
 		  const shuffledArray = [...array];
@@ -333,7 +339,7 @@
 				utterance.volume = 1; // Range: 0-1
 
 				const voices = window.speechSynthesis.getVoices();
-                const aVoice = voices.find(voice => voice.lang === 'th-TH');
+				const aVoice = voices.find(voice => voice.lang === 'th-TH');
 				
 				if (aVoice) {
 					utterance.voice = aVoice;
@@ -344,7 +350,6 @@
 				window.speechSynthesis.speak(utterance);
 			}
 		}
-		
 				
     </script>
     
