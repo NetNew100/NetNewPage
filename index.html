@@ -38,7 +38,32 @@
 ทุกสิ่งเป็นไปตามธรรมชาติ
 ฉันคือความสุข
 `;
-    </script>    
+
+        const THROAT_MESSAGES = `
+ขอพระเจ้าช่วยข้าพระองค์ให้ผ่านพ้นความยากลำบากนี้
+โปรดทรงช่วยให้ข้าพระองค์รอดพ้นวิกฤตนี้
+ขอพระองค์ทรงนำทางข้าพระองค์ในยามมืดมิด
+พระเจ้า โปรดช่วยข้าพระองค์ให้พ้นจากวิกฤตนี้
+ขอพระองค์ทรงนำข้าพระองค์ผ่านความมืดมิด  
+โปรดประทานความหวังแก่ข้าพระองค์ในวันนี้  
+ขอพระเจ้าทรงอยู่เคียงข้างข้าพระองค์ ผ่านพายุนี้  
+พระองค์ โปรดช่วยข้าพระองค์ให้ยืนหยัดได้  
+ขอพระเมตตาให้ข้าพระองค์เอาชนะความกลัวนี้  
+โปรดนำข้าพระองค์ให้พ้นจากความร้ายกาจทั้งปวง  
+ขอพระเจ้าประทานสันติสุขในใจข้าพระองค์  
+พระเจ้า โปรดทรงช่วยข้าพระองค์ให้รอดปลอดภัย  
+ขอพระองค์ทรงค้ำจุนข้าพระองค์ในยามนี้  
+โปรดประทานแสงสว่าง ปัดเป่าความมืดมิด  
+ขอพระองค์ โปรดนำสิ่งดีดี มาสู่ข้าพระองค์
+ขอพระเจ้าทรงยกภาระหนักนี้จากข้าพระองค์  
+พระองค์ โปรดช่วยข้าพระองค์ให้พบทางออกรอดพ้น
+ขอพระเมตตานำข้าพระองค์ให้พ้นภัยนี้  
+โปรดนำทางข้าพระองค์ไปสู่ความรอดพ้น  
+ขอพระองค์ทรงเป็นที่พึ่งของข้าพระองค์  
+พระเจ้า โปรดนำข้าพเจ้าให้ผ่านพ้นไปได้
+`;
+
+    </script>
     
     <style>
         body {
@@ -118,9 +143,10 @@
         <div id="buttonBlock" style="width:100%">
 			<button id="startBtnShort" onclick="startCareFreeChoice()">นั่งเฉยๆ ปล่อยใจ</button>
 			<button id="startBtnSilence" onclick="startSilenceChoice()">เงียบใจ (กลั้น)</button>
-			<button id="startBtnStress" disabled onclick="startCareFreeChoice()">เคลียร์คอ</button>
-			<button id="startBtnObserve" disabled onclick="startCareFreeChoice()">ผู้สังเกต</button>
-			<button id="startBtnLong" disabled onclick="startCareFreeChoice()">พิจละเอียด</button>
+			<button id="startBtnStress" onclick="startHelpChoice()">เคลียร์คอ</button>
+			<br/>
+			<button id="startBtnObserve" disabled style="background-color:#888;" onclick="startCareFreeChoice()">ผู้สังเกต</button>
+			<button id="startBtnLong" disabled style="background-color:#888;" onclick="startCareFreeChoice()">พิจละเอียด</button>
         </div>
         <div id="tipBlock">เลือกทาง</div>
     </div>
@@ -131,50 +157,52 @@
 		const divBtn = document.getElementById('buttonBlock');
 		const divTip = document.getElementById('tipBlock');
 		const container = document.querySelector('.container');
-				
+
 		const musicTracks = Array.from({ length: NUMBER_OF_BGM }, (_, i) => `audio/thi_bgm${i+1}.mp3`);
 		let audioElement = null;
 		let setNumNow = 0 ;
 		const musicQueue = [] ;
 		const msgQueue = [] ;
 		const tipQueue = [] ;
-		
+		const helpQueue = [] ;
+
 		const guideMessages = GUIDE_MESSAGES.split('\n').filter(x => x.trim().length > 0);
 		const tipMessages = TIP_MESSAGES.split('\n').filter(x => x.trim().length > 0);
-		
+		const helpMessages = THROAT_MESSAGES.split('\n').filter(x => x.trim().length > 0);
+
 		function startSilenceChoice(){
 			divBtn.style.display = 'none';
 			display.textContent = 'ปิดทุกอย่าง เตรียมเงียบ หยุดพูด เท่าที่ได้';
 			divTip.innerHTML = '<button onclick="startSilenceSession(60)">สั้น (1 นาที)</button>'
 							 + '<button onclick="startSilenceSession(300)">ปกติ (5 นาที)</button>'
-							 + '<button onclick="startSilenceSession(1200)">ยาว (20 นาที)</button>';        
+							 + '<button onclick="startSilenceSession(1200)">ยาว (20 นาที)</button>';
 		}
-		
+
 		function startSilenceSession(sec=300){
 			display.textContent = '';
 			divTip.textContent = 'ปิดทุกอย่าง แล้วเงียบ';
-			document.body.style.cursor = `url(${base64_blackTargetCursor}), auto`;            
+			document.body.style.cursor = `url(${base64_blackTargetCursor}), auto`;
 			
 			// Request fullscreen
 			if (container.requestFullscreen) {
 				container.requestFullscreen();
-			} else if (container.webkitRequestFullscreen) { // Safari 
+			} else if (container.webkitRequestFullscreen) { // Safari
 				container.webkitRequestFullscreen();
-			} else if (container.msRequestFullscreen) { // IE11 
+			} else if (container.msRequestFullscreen) { // IE11
 				container.msRequestFullscreen();
-			}           
+			}
 
 			if(sec > 10){
 				[5,4,3,2,1].forEach( x => {
 					setTimeout(() => { display.textContent = '' + x; }, 6000 - (x*1000))				
 				});
-			
+
 				setTimeout(() => {
 					display.textContent = '';
 					divTip.textContent = '';
 				}, 6000);
 			}
-			
+
 
 			setTimeout(() => {
 				const endBgm = new Audio();
@@ -186,7 +214,7 @@
 				});
 
 				endRoutine();
-			}, 6000 + (sec*1000));						
+			}, 6000 + (sec*1000));
 		}
 
 		function startCareFreeChoice(){
@@ -194,26 +222,26 @@
 			display.textContent = 'ปล่อยใจ ไปเรื่อยๆ';
 			divTip.innerHTML = '<button onclick="startCareFreeRoutine(2)">สั้น (2)</button>'
 							 + '<button onclick="startCareFreeRoutine(5)">ปกติ (5)</button>'
-							 + '<button onclick="startCareFreeRoutine(10)">ยาว (10)</button>';        
+							 + '<button onclick="startCareFreeRoutine(10)">ยาว (10)</button>';
 		}
-		
+
 		function startCareFreeRoutine(num=10) {
 			divBtn.style.display = 'none';
 			setNumNow = num ;
-			
+
 			// Request fullscreen
 			if (container.requestFullscreen) {
 				container.requestFullscreen();
-			} else if (container.webkitRequestFullscreen) { // Safari 
+			} else if (container.webkitRequestFullscreen) { // Safari
 				container.webkitRequestFullscreen();
-			} else if (container.msRequestFullscreen) { // IE11 
+			} else if (container.msRequestFullscreen) { // IE11
 				container.msRequestFullscreen();
-			}           
-			
-			startSet();
+			}
+
+			startCarefreeSet();
 		}
-		
-		function startSet(count=3){
+
+		function startCarefreeSet(count=3){
 			if(setNumNow > 0){
 				setNumNow-- ;
 				countdown(count);        
@@ -234,13 +262,13 @@
 				display.textContent = "Start!";
 				display.style.fontSize = '2.5rem';
 				display.style.color = '#888';
-				
-				setTimeout(startOrganizeMessages, 1000);
+
+				setTimeout(startCarefreeSequence, 1000);
 			}
 		}
 
-		function startOrganizeMessages() {
-		
+		function startCarefreeSequence() {
+
 			// Select and load random background music
 			if(musicQueue.length == 0) shuffleArrayToQueue(musicTracks, musicQueue);
 			const lastTrack = musicQueue.pop();
@@ -257,7 +285,7 @@
 			// and proceed to schedule a message set + endRoutine()
 			audioElement.onloadedmetadata = () => {
 				const danceDuration = audioElement.duration * 1000; // Convert to milliseconds
-				
+
 				// Start music and animation
 				audioElement.play().catch(error => {
 					console.log('Audio playback failed:', error);
@@ -266,11 +294,11 @@
 				if(msgQueue.length == 0) shuffleArrayToQueue(guideMessages, msgQueue);
 				display.textContent = msgQueue.pop();
 				speakThai(display.textContent);
-				
+
 				if(tipQueue.length == 0) shuffleArrayToQueue(tipMessages, tipQueue);
 				divTip.textContent = tipQueue.pop();
 				speakThai(divTip.textContent);
-				
+
 				const animationInterval = setInterval(() => {
 					if(msgQueue.length == 0) shuffleArrayToQueue(guideMessages, msgQueue);
 					display.textContent = msgQueue.pop() ;
@@ -278,19 +306,76 @@
 					
 					if(tipQueue.length == 0) shuffleArrayToQueue(tipMessages, tipQueue);
 					divTip.textContent = tipQueue.pop();
-					speakThai(divTip.textContent);					
-				}, 20000);  // change message every 20 seconds 
-				
+					speakThai(divTip.textContent);
+				}, 20000);  // change message every 20 seconds
+
 				// End dance when music ends
 				setTimeout(() => {
 					clearInterval(animationInterval);
 					divTip.textContent = '' ;
 					audioElement.pause();
 					audioElement.currentTime = 0;
-					startSet(3);
+					startCarefreeSet(3);
 				}, danceDuration);
-			};			                
+			};
 		}
+		
+		function startHelpChoice(){
+			divBtn.style.display = 'none';
+			display.textContent = 'ปิดทุกอย่าง เตรียมเงียบ แล้วพูดตาม';
+			divTip.innerHTML = '<button onclick="startHelpSession(5)">สั้น (5)</button>'
+							 + '<button onclick="startHelpSession(20)">ปกติ (20)</button>'
+							 + '<button onclick="startHelpSession(60)">ยาว (60)</button>';
+		}
+
+		function startHelpSession(utter=20){
+			display.textContent = '';
+			divTip.textContent = 'ปิดทุกอย่าง เตรียมเงียบ แล้วพูดตาม';
+			document.body.style.cursor = `url(${base64_blackTargetCursor}), auto`;
+			
+			// Request fullscreen
+			if (container.requestFullscreen) {
+				container.requestFullscreen();
+			} else if (container.webkitRequestFullscreen) { // Safari
+				container.webkitRequestFullscreen();
+			} else if (container.msRequestFullscreen) { // IE11
+				container.msRequestFullscreen();
+			}
+
+            // count down
+			[7,6,5,4,3,2,1].forEach( x => {
+				setTimeout(() => { display.textContent = '' + x; }, 8000 - (x*1000))				
+			});
+
+			setTimeout(() => {
+				display.textContent = '';
+				divTip.textContent = '';
+				guideHelp(utter);
+			}, 8000);
+		}
+		
+		function guideHelp(remaining){
+			if(remaining > 0){
+				if(helpQueue.length == 0) shuffleArrayToQueue(helpMessages, helpQueue);
+				const msg = helpQueue.pop();
+
+				display.textContent = msg;
+				
+				setTimeout(() => { speakThai(msg, 0.4, 0.5); }, 800 );
+				setTimeout(() => { guideHelp(remaining-1); }, 20000 );
+			} else {
+				const endBgm = new Audio();
+				endBgm.src = base64_finishSound ;
+				endBgm.volume = 0.85;
+				endBgm.loop = false;
+				endBgm.play().catch(error => {
+					console.log('Audio playback failed:', error);
+				});
+
+				endRoutine();				
+			}
+		}		
+		
 
 		function endRoutine() {
 	
@@ -305,8 +390,8 @@
 				}
 			}        
 			
-			document.body.style.cursor = 'crosshair';            
-		
+			document.body.style.cursor = 'crosshair';
+
 			display.textContent = "จ บ แ ล้ ว ! . เ ก่ ง ม า ก !";
 			const restartBtn = document.createElement('button');
 			restartBtn.textContent = "เริ่มอีกทีนะ";
@@ -316,6 +401,8 @@
 			};
 			document.querySelector('.container').appendChild(restartBtn);
 		}
+		
+		
 
 		function shuffleArrayToQueue(array, queue) {
 		  const shuffledArray = [...array];
@@ -327,7 +414,7 @@
 		}
 		
 		// module to speak out japanese voice
-		function speakThai(sentence) {
+		function speakThai(sentence, rate=0.5, pitch=0.8, volume=1) {
 			// Check if speech synthesis is supported
 			if ('speechSynthesis' in window) {
 				const utterance = new SpeechSynthesisUtterance(sentence);
@@ -350,6 +437,7 @@
 				window.speechSynthesis.speak(utterance);
 			}
 		}
+		
 				
     </script>
     
