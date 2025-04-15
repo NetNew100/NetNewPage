@@ -162,6 +162,7 @@
 		let audioElement = null;
 		let setNumNow = 0 ;
 		let currentGame = 'none' ;
+		let currentGameNum = 0 ;
 		const musicQueue = [] ;
 		const msgQueue = [] ;
 		const tipQueue = [] ;
@@ -181,7 +182,8 @@
 			const info = getJsonLocalStorage(KEY_HISTORY);
 			let totalGame = 0;
 			Object.entries(info).forEach(([key, value]) => {
-				totalGame += value;
+				if(key.startsWith("complete_num:"))
+					totalGame += value;
 			});
 			if(totalGame > 0)
 				divTip.innerHTML = "&#10004; &nbsp; ข้ามผ่านมาแล้ว " + totalGame + " ก้าว" ;		
@@ -198,6 +200,7 @@
 
 		function startSilenceSession(sec=300){
 			currentGame = KEY_HISTORY_SILENCE_GAME ;
+			currentGameNum = sec ;
 			display.textContent = '';
 			divTip.textContent = 'ปิดทุกอย่าง แล้วเงียบ';
 			document.body.style.cursor = `url(${base64_blackTargetCursor}), auto`;
@@ -247,6 +250,7 @@
 
 		function startCareFreeRoutine(num=10) {
 			currentGame = KEY_HISTORY_LETFREE_GAME ;
+			currentGameNum = num ;
 			divBtn.style.display = 'none';
 			setNumNow = num ;
 
@@ -352,6 +356,7 @@
 
 		function startHelpSession(utter=20){
 			currentGame = KEY_HISTORY_CALLHELP_GAME ;
+			currentGameNum = utter ;
 			display.textContent = '';
 			divTip.textContent = 'ปิดทุกอย่าง เตรียมเงียบ แล้วพูดตาม';
 			document.body.style.cursor = `url(${base64_blackTargetCursor}), auto`;
@@ -432,10 +437,12 @@
 			const historyBook = getJsonLocalStorage(KEY_HISTORY);
 			const historyKey = 'complete_num:' +currentGame ;
 			historyBook[historyKey] = (historyKey in historyBook)? historyBook[historyKey]+1 : 1 ;
+			const totalKey = 'complete_total:' +currentGame ;
+			historyBook[totalKey] = (totalKey in historyBook)? historyBook[totalKey]+currentGameNum : currentGameNum ;
 			setJsonLocalStorage(KEY_HISTORY, historyBook);			
 			
 			// show success
-			divTip.innerHTML = "&#10004; &nbsp; สำเร็จแล้ว " + historyBook[historyKey] + " ครั้ง";
+			divTip.innerHTML = "&#10004; &nbsp; สำเร็จแล้ว " + historyBook[historyKey] + " ครั้ง &nbsp; ( ทั้งหมด " + historyBook[totalKey] + " )";
 		}
 		
 		
