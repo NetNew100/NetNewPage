@@ -161,6 +161,7 @@
 		const musicTracks = Array.from({ length: NUMBER_OF_BGM }, (_, i) => `audio/thi_bgm${i+1}.mp3`);
 		let audioElement = null;
 		let setNumNow = 0 ;
+		let currentGame = 'none' ;
 		const musicQueue = [] ;
 		const msgQueue = [] ;
 		const tipQueue = [] ;
@@ -169,6 +170,23 @@
 		const guideMessages = GUIDE_MESSAGES.split('\n').filter(x => x.trim().length > 0);
 		const tipMessages = TIP_MESSAGES.split('\n').filter(x => x.trim().length > 0);
 		const helpMessages = THROAT_MESSAGES.split('\n').filter(x => x.trim().length > 0);
+		
+		const KEY_HISTORY = 'thi_HISTORY';
+		const KEY_HISTORY_SILENCE_GAME = 'silence' ;
+		const KEY_HISTORY_LETFREE_GAME = 'letfree' ;
+		const KEY_HISTORY_CALLHELP_GAME = 'callhelp' ;
+		
+		function displaySuccessHistory()
+		{ 	
+			const info = getJsonLocalStorage(KEY_HISTORY);
+			let totalGame = 0;
+			Object.entries(info).forEach(([key, value]) => {
+				totalGame += value;
+			});
+			if(totalGame > 0)
+				divTip.innerHTML = "&#10004; &nbsp; ข้ามผ่านมาแล้ว " + totalGame + " ก้าว" ;		
+		} // initialize history
+		displaySuccessHistory();
 
 		function startSilenceChoice(){
 			divBtn.style.display = 'none';
@@ -179,6 +197,7 @@
 		}
 
 		function startSilenceSession(sec=300){
+			currentGame = KEY_HISTORY_SILENCE_GAME ;
 			display.textContent = '';
 			divTip.textContent = 'ปิดทุกอย่าง แล้วเงียบ';
 			document.body.style.cursor = `url(${base64_blackTargetCursor}), auto`;
@@ -227,6 +246,7 @@
 		}
 
 		function startCareFreeRoutine(num=10) {
+			currentGame = KEY_HISTORY_LETFREE_GAME ;
 			divBtn.style.display = 'none';
 			setNumNow = num ;
 
@@ -331,6 +351,7 @@
 		}
 
 		function startHelpSession(utter=20){
+			currentGame = KEY_HISTORY_CALLHELP_GAME ;
 			display.textContent = '';
 			divTip.textContent = 'ปิดทุกอย่าง เตรียมเงียบ แล้วพูดตาม';
 			document.body.style.cursor = `url(${base64_blackTargetCursor}), auto`;
@@ -403,8 +424,18 @@
 			restartBtn.onclick = () => {
 				divBtn.style.display = 'block';
 				restartBtn.remove();
+				displaySuccessHistory();
 			};
 			document.querySelector('.container').appendChild(restartBtn);
+			
+			// record completion
+			const historyBook = getJsonLocalStorage(KEY_HISTORY);
+			const historyKey = 'complete_num:' +currentGame ;
+			historyBook[historyKey] = (historyKey in historyBook)? historyBook[historyKey]+1 : 1 ;
+			setJsonLocalStorage(KEY_HISTORY, historyBook);			
+			
+			// show success
+			divTip.innerHTML = "&#10004; &nbsp; สำเร็จแล้ว " + historyBook[historyKey] + " ครั้ง";
 		}
 		
 		
@@ -418,23 +449,41 @@
 		  shuffledArray.forEach(x => { queue.push(x);}); 
 		}
 		
-        let wakeLock = null;
-        async function requestWakeLock() {
-            try {
-                wakeLock = await navigator.wakeLock.request('screen');
-                // console.log('Wake Lock เปิดใช้งานแล้ว');
-            } catch (err) {
-                console.error('ไม่สามารถเปิด Wake Lock: ', err);
-            }
-        }
-        function releaseWakeLock() {
-            if (wakeLock !== null) {
-                wakeLock.release().then(() => {
-                    wakeLock = null;
-                    // console.log('Wake Lock ถูกปิด');
-                });
-            }
-        }
+		let wakeLock = null;
+		async function requestWakeLock() {
+			try {
+				wakeLock = await navigator.wakeLock.request('screen');
+				// console.log('Wake Lock เปิดใช้งานแล้ว');
+			} catch (err) {
+				console.error('ไม่สามารถเปิด Wake Lock: ', err);
+			}
+		}
+		function releaseWakeLock() {
+			if (wakeLock !== null) {
+				wakeLock.release().then(() => {
+					wakeLock = null;
+					// console.log('Wake Lock ถูกปิด');
+				});
+			}
+		}
+		
+		function setJsonLocalStorage(key, jsonData) {
+			try {
+				localStorage.setItem(key, JSON.stringify(jsonData)); // Convert JSON to string and store
+			} catch (e) {
+				console.error("Error storing JSON in localStorage:", e);
+			}
+		}
+		
+		function getJsonLocalStorage(key) {
+			try {
+				const jsonString = localStorage.getItem(key);
+				return jsonString ? JSON.parse(jsonString) : {};
+			} catch (e) {
+				console.error("Error parsing JSON from localStorage:", e);
+				return {};
+			}
+		}
 
 		
 		// module to speak out japanese voice
