@@ -61,6 +61,11 @@
 โปรดนำทางข้าพระองค์ไปสู่ความรอดพ้น  
 ขอพระองค์ทรงเป็นที่พึ่งของข้าพระองค์  
 พระเจ้า โปรดนำข้าพเจ้าให้ผ่านพ้นไปได้
+ขอพระเจ้าโปรดช่วยข้าพระองค์ด้วย
+ขอพระองค์นำพาไปสู่ความรอดพ้น
+ขอให้ผ่านวิกฤตนี้ไปได้ด้วยดี
+ความรักของพระองค์ช่วยให้รอดพ้นสู่ความสำเร็จ
+ความมืดมิดในวันนี้จะผ่านพ้นไป เราจะรอดด้วยพระคุณ
 `;
 
 	</script>
@@ -145,7 +150,7 @@
 			<button id="startBtnSilence" onclick="startSilenceChoice()">เงียบใจ (กลั้น)</button>
 			<button id="startBtnStress" onclick="startHelpChoice()">เคลียร์คอ</button>
 			<br/>
-			<button id="startBtnObserve" disabled style="background-color:#888;" onclick="startCareFreeChoice()">ผู้สังเกต</button>
+			<button id="startBtnObserve" onclick="startSatiChoice()">สติ</button>
 			<button id="startBtnLong" disabled style="background-color:#888;" onclick="startCareFreeChoice()">พิจละเอียด</button>
 		</div>
 		<div id="tipBlock">เลือกทาง</div>
@@ -197,8 +202,17 @@
 							 + '<button onclick="startSilenceSession(300)">ปกติ (5 นาที)</button>'
 							 + '<button onclick="startSilenceSession(1200)">ยาว (20 นาที)</button>';
 		}
+		
+		function startSatiChoice(){
+			divBtn.style.display = 'none';
+			display.textContent = 'ปิดทุกอย่าง เตรียมเงียบ หยุดพูด เท่าที่ได้';
+			divTip.innerHTML = '<button onclick="startSilenceSession(120, 30)">สั้น (2 นาที)</button>'
+							 + '<button onclick="startSilenceSession(420, 60)">ปกติ (7 นาที)</button>'
+							 + '<button onclick="startSilenceSession(1200, 60)">ยาว (20 นาที)</button>';
+		}
+		
 
-		function startSilenceSession(sec=300){
+		function startSilenceSession(sec=300, satiCallSec=0){
 			currentGame = KEY_HISTORY_SILENCE_GAME ;
 			currentGameNum = sec ;
 			display.textContent = '';
@@ -225,9 +239,18 @@
 					divTip.textContent = '';
 				}, 6000);
 			}
-
+			
+			let satiInterval = null ;
+			if(satiCallSec > 0){
+				setTimeout(() => {
+					satiInterval = setInterval(() => { speakThai("สติ"); }, satiCallSec*1000);  				
+				}, 6200 );
+			}
 
 			setTimeout(() => {
+				if(satiInterval !== null)
+					clearInterval(satiInterval) ;
+					
 				const endBgm = new Audio();
 				endBgm.src = base64_finishSound ;
 				endBgm.volume = 0.85;
@@ -238,7 +261,7 @@
 
 				endRoutine();
 			}, 6000 + (sec*1000));
-		}
+		}		
 
 		function startCareFreeChoice(){
 			divBtn.style.display = 'none';
