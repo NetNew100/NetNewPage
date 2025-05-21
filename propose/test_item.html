@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background-color: #f4f4f9;
+        }
+        .content {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 12px 24px;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #36A2EB;
+            color: white;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #2A8ABF;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>Quick Feedback</h1>
+        <p>Do you like our service?</p>
+    </div>
+    <button onclick="recordResponse('Yes')">Yes</button>
+    <button onclick="recordResponse('No')">No</button>
+
+    <script src="https://www.gstatic.com/firebasejs/11.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore-compat.js"></script>
+
+    <script>
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDgxSkIL3yFyXcul3El4p-n3YqAuDgmD-U",
+            authDomain: "registoos.firebaseapp.com",
+            projectId: "registoos",
+            storageBucket: "registoos.firebasestorage.app",
+            messagingSenderId: "1050702841995",
+            appId: "1:1050702841995:web:5f89026179c95dac71ec8e"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Record response to Firestore
+        function recordResponse(response) {
+            db.collection("responses").add({
+                response: response,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then(() => {
+                alert("Thank you! Your response (" + response + ") has been recorded.");
+            })
+            .catch((error) => {
+                console.error("Error recording response: ", error);
+                alert("Error: Could not record response.");
+            });
+        }
+    </script>
+</body>
+</html>
