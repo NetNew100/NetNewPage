@@ -61,6 +61,8 @@ function _t(t){return t+.5|0}const yt=(t,e,i)=>Math.max(Math.min(t,i),e);functio
 		};
     
     
+	const SETTING_responsive = false ;
+		    
         Chart.register(ChartDataLabels);
 
         const chartsBar = [null, null, null, null];
@@ -103,7 +105,7 @@ function _t(t){return t+.5|0}const yt=(t,e,i)=>Math.max(Math.min(t,i),e);functio
 				type: 'boxplot',
 				data: boxplotData,
 				options: {
-					  responsive: true,
+					  responsive: SETTING_responsive,
 					  scales: {
 						y: {
 							beginAtZero: false,
@@ -124,7 +126,7 @@ function _t(t){return t+.5|0}const yt=(t,e,i)=>Math.max(Math.min(t,i),e);functio
 					  plugins: {
 							legend: { display: false },
 							datalabels: { display: false }
-					  }						  
+					  }
 					}
 				});                
         }
@@ -154,7 +156,7 @@ function _t(t){return t+.5|0}const yt=(t,e,i)=>Math.max(Math.min(t,i),e);functio
 					}))
 				},
 				options: {
-					responsive: true,
+					responsive: SETTING_responsive,
 					scales: {
 						y: {
 							beginAtZero: false,
@@ -268,7 +270,7 @@ function _t(t){return t+.5|0}const yt=(t,e,i)=>Math.max(Math.min(t,i),e);functio
 					}]
 				},
 				options: {
-					responsive: true,
+					responsive: SETTING_responsive,
 					scales: {
 						y: {
 							beginAtZero: false,
@@ -406,7 +408,7 @@ function _t(t){return t+.5|0}const yt=(t,e,i)=>Math.max(Math.min(t,i),e);functio
 					}]
 				},
 				options: {
-					responsive: true,
+					responsive: SETTING_responsive,
 					scales: {
 						y: {
 							beginAtZero: true,
@@ -464,6 +466,7 @@ function _t(t){return t+.5|0}const yt=(t,e,i)=>Math.max(Math.min(t,i),e);functio
 							textAlign: 'center'
 						}
 					}
+
 				}
 			});
         
@@ -495,7 +498,7 @@ function _t(t){return t+.5|0}const yt=(t,e,i)=>Math.max(Math.min(t,i),e);functio
 					}]
 				},
 				options: {
-					responsive: true,
+					responsive: SETTING_responsive,
 					scales: {
 						y: {
 							beginAtZero: false,
@@ -552,7 +555,7 @@ function _t(t){return t+.5|0}const yt=(t,e,i)=>Math.max(Math.min(t,i),e);functio
 					}]
 				},
 				options: {
-					responsive: true,
+					responsive: SETTING_responsive,
 					scales: {
 						y: {
 							beginAtZero: false,
@@ -618,7 +621,6 @@ function _t(t){return t+.5|0}const yt=(t,e,i)=>Math.max(Math.min(t,i),e);functio
 				}
 			});        
         }
-
 
     </script>
 
@@ -898,21 +900,21 @@ function _t(t){return t+.5|0}const yt=(t,e,i)=>Math.max(Math.min(t,i),e);functio
 
 </head>
 <body>
-	<div id="displayArea" style="margin:0px;padding:0px;background-color:black;">
+	<div id="displayArea" style="margin:0px;padding:0px;background-color:black;width:100%;text-align:center;">
 	  <h3 class="chartTitle" id="chartTitle">Variable Potential Check</h3>
-	  <div id="displayNormal" style="margin:0px;padding:0px;background-color:black;">
-		<table>
+	  <div id="displayNormal" style="margin:0px;padding:0px;background-color:black;display:block;">
+		<table style="width:100%;">
 			<tr>
-				<td><canvas id="barChart1" width="300" height="220"></canvas></td>
-				<td><canvas id="barChart2" width="300" height="220"></canvas></td>
-				<td><canvas id="barChart3" width="300" height="220"></canvas></td>
-				<td><canvas id="barChart4" width="300" height="220"></canvas></td>
+				<td style="width:25%;"><canvas id="barChart1" width="300" height="220"></canvas></td>
+				<td style="width:25%;"><canvas id="barChart2" width="300" height="220"></canvas></td>
+				<td style="width:25%;"><canvas id="barChart3" width="300" height="220"></canvas></td>
+				<td style="width:25%;"><canvas id="barChart4" width="300" height="220"></canvas></td>
 			</tr>
 			<tr>
-				<td><canvas id="lineChart1" width="300" height="180"></canvas></td>
-				<td><canvas id="lineChart2" width="300" height="180"></canvas></td>
-				<td><canvas id="lineChart3" width="300" height="180"></canvas></td>
-				<td><canvas id="lineChart4" width="300" height="180"></canvas></td>
+				<td style="width:25%;"><canvas id="lineChart1" width="300" height="180"></canvas></td>
+				<td style="width:25%;"><canvas id="lineChart2" width="300" height="180"></canvas></td>
+				<td style="width:25%;"><canvas id="lineChart3" width="300" height="180"></canvas></td>
+				<td style="width:25%;"><canvas id="lineChart4" width="300" height="180"></canvas></td>
 			</tr>
 		</table>
 	  </div>
@@ -1200,8 +1202,9 @@ function _t(t){return t+.5|0}const yt=(t,e,i)=>Math.max(Math.min(t,i),e);functio
 									  , ((x) => _find_(x, cuts_by_group[4]) )
 									];				
 				}
-				
-				book_rec.indicator_last_dt = sec_xy[i_first_dt - sec_i_first_dt + indicator.length - 1].x ;
+
+				const [ref_first_yr, ref_first_month] = [Math.floor(ref_date_at_zero/100), ref_date_at_zero % 100 ] ;
+				book_rec.indicator_last_dt = new Date(ref_first_yr, ref_first_month+i_first_dt+indicator.length-1,0) ;
 				book_rec.bins = [] ;
 				
 				binning_plan.forEach((bin_func, b) => {
@@ -1350,8 +1353,8 @@ function _t(t){return t+.5|0}const yt=(t,e,i)=>Math.max(Math.min(t,i),e);functio
         }
         
         let tvModeStart = false ;        
-	let hasAudioPlayed = false ;
-        function tvMode(){
+		let hasAudioPlayed = false ;
+		function tvMode(){
 			const ctrlDiv = document.getElementById('controlArea');
 			if(!tvModeStart){
 				tvModeStart = true;
@@ -1359,18 +1362,16 @@ function _t(t){return t+.5|0}const yt=(t,e,i)=>Math.max(Math.min(t,i),e);functio
 				const randomSelect = (select) => select.selectedIndex = Math.floor(Math.random() * select.options.length);			
 				const setNewVar = () => {
 					if(!tvModeStart) return ;
-					[selFwdPer, selTitle, selAtMonth, selUseSec].forEach(sel => randomSelect(sel))
-					useSec(selUseSec.value);rebuildBinningData();rebuildSel();showBySelect();				
-					setTimeout(setNewVar, 10000);
+					if(!hasAudioPlayed){	hasAudioPlayed = true ;
+						document.getElementById('backgroundMusic').play().catch(error => {
+							console.error("Audio playback failed:", error);
+						});
+					}
+					setTimeout(setNewVar, 15000);
+					[selTitle, selUseSec].forEach(sel => randomSelect(sel))
+					useSec(selUseSec.value);rebuildBinningData();rebuildSel();showBySelect();
 				} ;
 				setNewVar();
-				if(!hasAudioPlayed){
-					hasAudioPlayed = true ;
-					  const audio = document.getElementById('backgroundMusic');
-					  audio.play().catch(error => {
-					    console.error("Audio playback failed:", error);
-					  });
-				}
 			}else{
 				tvModeStart = false;
 				ctrlDiv.style.opacity = 1 ;
@@ -1553,10 +1554,7 @@ function _t(t){return t+.5|0}const yt=(t,e,i)=>Math.max(Math.min(t,i),e);functio
 
     <audio id="backgroundMusic" loop>
       <source src="audio/suica.mp3" type="audio/mpeg">
-      Your browser does not support the audio element.
     </audio>
-
-	
 	
 </body>
 </html>
