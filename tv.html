@@ -1350,6 +1350,7 @@ function _t(t){return t+.5|0}const yt=(t,e,i)=>Math.max(Math.min(t,i),e);functio
         }
         
         let tvModeStart = false ;        
+	let hasAudioPlayed = false ;
         function tvMode(){
 			const ctrlDiv = document.getElementById('controlArea');
 			if(!tvModeStart){
@@ -1363,6 +1364,13 @@ function _t(t){return t+.5|0}const yt=(t,e,i)=>Math.max(Math.min(t,i),e);functio
 					setTimeout(setNewVar, 10000);
 				} ;
 				setNewVar();
+				if(!hasAudioPlayed){
+					hasAudioPlayed = true ;
+					  const audio = document.getElementById('backgroundMusic');
+					  audio.play().catch(error => {
+					    console.error("Audio playback failed:", error);
+					  });
+				}
 			}else{
 				tvModeStart = false;
 				ctrlDiv.style.opacity = 1 ;
@@ -1543,6 +1551,12 @@ function _t(t){return t+.5|0}const yt=(t,e,i)=>Math.max(Math.min(t,i),e);functio
 
     </script>
 
+    <audio id="backgroundMusic" loop>
+      <source src="audio/suica.mp3" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
 
+	
+	
 </body>
 </html>
